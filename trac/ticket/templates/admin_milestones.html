@@ -26,6 +26,29 @@
         $("#millist").addSelectAllCheckboxes();
       });
     </script>
+    <script>
+      function searchTable() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchBoxMilestones");
+        filter = new RegExp(input.value,"i");
+        table = document.getElementById("milestone_table");
+        tr = table.getElementsByTagName("tr");
+      
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[1];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (filter.test(txtValue)) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+      </script>
     # endblock head
   </head>
 
@@ -80,6 +103,8 @@
       #     endif
 
       #     if milestones:
+      <input type="text" id="searchBoxMilestones" onkeyup="searchTable()" placeholder="Search milestones..">
+
       <form id="milestone_table" method="post" action="${req.request_path}">
         ${jmacros.form_token_input()}
         <table class="listing" id="millist">
