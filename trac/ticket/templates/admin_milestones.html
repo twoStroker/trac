@@ -133,22 +133,6 @@
               </td>
             </tr>
             # endfor
-          </tbody>
-        </table>
-        <h3>Open (no due date)</h3>
-        <table class="listing" id="millist">
-          <thead>
-            <tr>
-              # if can_remove:
-              <th class="sel"></th>
-              # endif
-              <th>${_("Name")}</th><th>${_("Due")}</th><th>${_("Completed")}</th>
-              <th title="${_('Default milestone for new tickets')}">${_("Default")}</th>
-              <th title="${_('Default milestone for retargeting tickets')}">${_("Retarget")}</th>
-              <th title="${_('Number of tickets associated with milestone')}">${_("Tickets")}</th>
-            </tr>
-          </thead>
-          <tbody>
             # for milestone in milestones if not milestone.completed and not milestone.due:
             <tr>
               # if can_remove:
@@ -186,22 +170,6 @@
               </td>
             </tr>
             # endfor
-          </tbody>
-        </table>
-        <h3>Completed</h3>
-        <table class="listing" id="millist">
-          <thead>
-            <tr>
-              # if can_remove:
-              <th class="sel"></th>
-              # endif
-              <th>${_("Name")}</th><th>${_("Due")}</th><th>${_("Completed")}</th>
-              <th title="${_('Default milestone for new tickets')}">${_("Default")}</th>
-              <th title="${_('Default milestone for retargeting tickets')}">${_("Retarget")}</th>
-              <th title="${_('Number of tickets associated with milestone')}">${_("Tickets")}</th>
-            </tr>
-          </thead>
-          <tbody>
             # for milestone in milestones if milestone.completed:
             <tr>
               # if can_remove:
