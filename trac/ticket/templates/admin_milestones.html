@@ -82,6 +82,7 @@
       #     if milestones:
       <form id="milestone_table" method="post" action="${req.request_path}">
         ${jmacros.form_token_input()}
+        <h3>Open (by due date)</h3>
         <table class="listing" id="millist">
           <thead>
             <tr>
@@ -95,7 +96,113 @@
             </tr>
           </thead>
           <tbody>
-            # for milestone in milestones:
+            # for milestone in milestones if not milestone.completed and milestone.due:
+            <tr>
+              # if can_remove:
+              <td class="sel">
+                <input type="checkbox" class="trac-disable-determinant"
+                       name="sel" value="${milestone.name}" />
+              </td>
+              # endif
+              <td>
+                <a href="${panel_href(milestone.name)}">${milestone.name}</a>
+              </td>
+              <td>${format_datetime(milestone.due) if milestone.due}</td>
+              <td>${format_datetime(milestone.completed) if milestone.completed}</td>
+              <td class="default">
+                <input type="radio" name="ticket_default"${
+                     {'value': milestone.name,
+                      'checked': milestone.name == ticket_default,
+                      'disabled': not can_config
+                     }|htmlattr}/>
+              </td>
+              <td class="default">
+                <input type="radio" name="retarget_default"${
+                     {'value': milestone.name,
+                      'checked': milestone.name == retarget_default,
+                      'disabled': not can_config
+                      }|htmlattr}/>
+              </td>
+                # set ticket_count = num_tickets(milestone)
+              <td class="num">
+                # if ticket_count == 0 or not can_view_tickets:
+                ${ticket_count}
+                # else:
+                <a href="${query_href(milestone.name)}">${ticket_count}</a>
+                # endif
+              </td>
+            </tr>
+            # endfor
+          </tbody>
+        </table>
+        <h3>Open (no due date)</h3>
+        <table class="listing" id="millist">
+          <thead>
+            <tr>
+              # if can_remove:
+              <th class="sel"></th>
+              # endif
+              <th>${_("Name")}</th><th>${_("Due")}</th><th>${_("Completed")}</th>
+              <th title="${_('Default milestone for new tickets')}">${_("Default")}</th>
+              <th title="${_('Default milestone for retargeting tickets')}">${_("Retarget")}</th>
+              <th title="${_('Number of tickets associated with milestone')}">${_("Tickets")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            # for milestone in milestones if not milestone.completed and not milestone.due:
+            <tr>
+              # if can_remove:
+              <td class="sel">
+                <input type="checkbox" class="trac-disable-determinant"
+                       name="sel" value="${milestone.name}" />
+              </td>
+              # endif
+              <td>
+                <a href="${panel_href(milestone.name)}">${milestone.name}</a>
+              </td>
+              <td>${format_datetime(milestone.due) if milestone.due}</td>
+              <td>${format_datetime(milestone.completed) if milestone.completed}</td>
+              <td class="default">
+                <input type="radio" name="ticket_default"${
+                     {'value': milestone.name,
+                      'checked': milestone.name == ticket_default,
+                      'disabled': not can_config
+                     }|htmlattr}/>
+              </td>
+              <td class="default">
+                <input type="radio" name="retarget_default"${
+                     {'value': milestone.name,
+                      'checked': milestone.name == retarget_default,
+                      'disabled': not can_config
+                      }|htmlattr}/>
+              </td>
+                # set ticket_count = num_tickets(milestone)
+              <td class="num">
+                # if ticket_count == 0 or not can_view_tickets:
+                ${ticket_count}
+                # else:
+                <a href="${query_href(milestone.name)}">${ticket_count}</a>
+                # endif
+              </td>
+            </tr>
+            # endfor
+          </tbody>
+        </table>
+        <h3>Completed</h3>
+        <table class="listing" id="millist">
+          <thead>
+            <tr>
+              # if can_remove:
+              <th class="sel"></th>
+              # endif
+              <th>${_("Name")}</th><th>${_("Due")}</th><th>${_("Completed")}</th>
+              <th title="${_('Default milestone for new tickets')}">${_("Default")}</th>
+              <th title="${_('Default milestone for retargeting tickets')}">${_("Retarget")}</th>
+              <th title="${_('Number of tickets associated with milestone')}">${_("Tickets")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            # for milestone in milestones if milestone.completed:
             <tr>
               # if can_remove:
               <td class="sel">

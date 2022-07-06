@@ -27,7 +27,7 @@ from trac.resource import Resource, ResourceExistsError, ResourceNotFound
 from trac.ticket.api import TicketSystem
 from trac.util import as_int, embedded_numbers, to_list
 from trac.util.datefmt import (datetime_now, from_utimestamp, parse_date,
-                               to_utimestamp, utc, utcmax)
+                               to_utimestamp, utc, utcmax, utcmin)
 from trac.util.text import empty, stripws
 from trac.util.translation import _, N_, gettext
 
@@ -1270,9 +1270,9 @@ class Milestone(object):
             milestones = [m for m in milestones if m.completed is None]
         def milestone_order(m):
             return (m.completed or utcmax,
-                    m.due or utcmax,
+                    m.due or utcmin,
                     embedded_numbers(m.name))
-        return sorted(milestones, key=milestone_order)
+        return sorted(milestones, key=milestone_order,reverse=True)
 
 
 class Report(object):
