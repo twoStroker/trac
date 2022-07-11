@@ -11,11 +11,18 @@
 # import 'macros.html' as jmacros with context
   <script>
     jQuery(function($) {
+      function updateStartDate() {
+        $("#startdate").enable($("#start").checked());
+      }
+      $("#start").click(updateStartDate);
+      updateStartDate();
+
       function updateDueDate() {
         $("#duedate").enable($("#due").checked());
       }
       $("#due").click(updateDueDate);
       updateDueDate();
+
       function updateCompletedDate() {
         var checked = $("#completed").checked();
         $("#completeddate").enable(checked);
@@ -61,6 +68,27 @@
                {'value': milestone.name or req.args.get('name'),
                 'readonly': readonly
                }|htmlattr}/>
+        </label>
+      </div>
+      <div class="field">
+        <label>
+          <input type="checkbox" id="start" name="start"${
+               {'checked': milestone.start,
+                'disabled': disabled
+               }|htmlattr}/>
+          ${_("Start:")}<br/>
+        </label>
+        ## same for this one
+        <label${{'class': {'readonly': readonly}}|htmlattr}>
+          <input type="text" id="startdate" name="startdate"
+                 class="trac-datetimepicker"${
+               {'size': len(datetime_hint) + 1,
+                'value': format_datetime(milestone.start or default_due),
+                'readonly': readonly,
+                'title': _('Format: %(datehint)s', datehint=datetime_hint)
+               }|htmlattr}/>
+          <span class="trac-datetimehint">${
+            _("Format: %(datehint)s", datehint=datetime_hint)}</span>
         </label>
       </div>
       <div class="field">

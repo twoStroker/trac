@@ -789,6 +789,16 @@ class MilestoneModule(Component):
             default_due += timedelta(days=1)
         return to_datetime(default_due, req.tz)
 
+    def get_default_start(self, req):
+        """Returns a `datetime` object representing the default start date in
+        the user's timezone. The default start time is 00:00 (beginning of current day) in the user's
+        time zone.
+        """
+        now = datetime_now(req.tz)
+        default_start = datetime(now.year, now.month, now.day, 0)
+        
+        return to_datetime(default_start, req.tz)
+
     def save_milestone(self, req, milestone):
         # Instead of raising one single error, check all the constraints
         # and let the user fix them by going back to edit mode and showing
@@ -799,6 +809,14 @@ class MilestoneModule(Component):
             warnings.append(msg)
 
         milestone.description = req.args.get('description', '')
+
+        if 'start' in req.args:
+            startdate = req.args.get('startdate')
+            milestone.start = user_time(req, parse_date, startdate,
+                                      hint='datetime') \
+                            if startdate else None
+        else:
+            milestone.start = None
 
         if 'due' in req.args:
             duedate = req.args.get('duedate')
@@ -1166,7 +1184,7 @@ class MilestoneModule(Component):
             return
         term_regexps = search_to_regexps(terms)
         milestone_realm = Resource(self.realm)
-        for name, due, completed, description \
+        for name, start, due, completed, description \
                 in MilestoneCache(self.env).milestones.values():
             if all(r.search(description) or r.search(name)
                    for r in term_regexps):

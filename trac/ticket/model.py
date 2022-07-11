@@ -1057,11 +1057,12 @@ class MilestoneCache(core.Component):
         description.
         """
         milestones = {}
-        for name, due, completed, description in self.env.db_query("""
-                SELECT name, due, completed, description FROM milestone
+        for name, start, due, completed, description in self.env.db_query("""
+                SELECT name, start, due, completed, description FROM milestone
                 """):
             milestones[name] = (
                 name,
+                _from_timestamp(start),
                 _from_timestamp(due),
                 _from_timestamp(completed),
                 description or '')
@@ -1092,9 +1093,10 @@ class MilestoneCache(core.Component):
         process, until its `~Milestone.insert` method gets called with
         success.
         """
-        name, due, completed, description = values
+        name, start, due, completed, description = values
         milestone = milestone or Milestone(self.env)
         milestone.name = name
+        milestone.start = start
         milestone.due = due
         milestone.completed = completed
         milestone.description = description
@@ -1125,7 +1127,7 @@ class Milestone(object):
                     _("Milestone %(name)s does not exist.",
                       name=name), _("Invalid milestone name."))
         else:
-            self.cache.factory((None, None, None, ''), self)
+            self.cache.factory((None, None, None, None, ''), self)
 
     def __repr__(self):
         return '<%s %r>' % (self.__class__.__name__, self.name)
@@ -1140,7 +1142,9 @@ class Milestone(object):
                                     self.due < datetime_now(utc))
 
     def checkin(self, invalidate=True):
-        self._old = {'name': self.name, 'due': self.due,
+        self._old = {'name': self.name, 
+                     'start': self.start,
+                     'due': self.due,
                      'completed': self.completed,
                      'description': self.description}
         if invalidate:
@@ -1173,9 +1177,9 @@ class Milestone(object):
         with self.env.db_transaction as db:
             try:
                 db("""
-                    INSERT INTO milestone (name, due, completed, description)
-                    VALUES (%s,%s,%s,%s)
-                    """, (self.name, to_utimestamp(self.due),
+                    INSERT INTO milestone (name, start, due, completed, description)
+                    VALUES (%s,%s,%s,%s,%s)
+                    """, (self.name, to_utimestamp(self.start), to_utimestamp(self.due),
                           to_utimestamp(self.completed), self.description))
             except self.env.db_exc.IntegrityError:
                 raise ResourceExistsError(
@@ -1209,9 +1213,9 @@ class Milestone(object):
             self.env.log.info("Updating milestone '%s'", old['name'])
             try:
                 db("""UPDATE milestone
-                      SET name=%s, due=%s, completed=%s, description=%s
+                      SET name=%s, start=%s, due=%s, completed=%s, description=%s
                       WHERE name=%s
-                      """, (self.name, to_utimestamp(self.due),
+                      """, (self.name, to_utimestamp(self.start), to_utimestamp(self.due),
                             to_utimestamp(self.completed),
                             self.description, old['name']))
             except self.env.db_exc.IntegrityError:

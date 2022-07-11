@@ -1123,6 +1123,7 @@ class MilestoneTestCase(unittest.TestCase):
         milestone = Milestone(self.env)
         self.assertFalse(milestone.exists)
         self.assertIsNone(milestone.name)
+        self.assertIsNone(milestone.start)
         self.assertIsNone(milestone.due)
         self.assertIsNone(milestone.completed)
         self.assertEqual('', milestone.description)
@@ -1157,16 +1158,34 @@ class MilestoneTestCase(unittest.TestCase):
         milestone.name = 'Test'
         milestone.insert()
 
-        self.assertEqual([('Test', 0, 0, '')], self.env.db_query("""
-            SELECT name, due, completed, description FROM milestone
+        self.assertEqual([('Test', 0, 0, 0, '')], self.env.db_query("""
+            SELECT name, start, due, completed, description FROM milestone
             WHERE name='Test'
             """))
 
         # Use the same model object to update the milestone
         milestone.description = 'Some text'
         milestone.update()
-        self.assertEqual([('Test', 0, 0, 'Some text')], self.env.db_query("""
-            SELECT name, due, completed, description FROM milestone
+        self.assertEqual([('Test', 0, 0, 0, 'Some text')], self.env.db_query("""
+            SELECT name, start, due, completed, description FROM milestone
+            WHERE name='Test'
+            """))
+
+    def test_create_and_update_milestone_dates(self):
+        milestone = Milestone(self.env)
+        milestone.name = 'Test'
+        milestone.insert()
+
+        self.assertEqual([('Test', 0, 0, 0, '')], self.env.db_query("""
+            SELECT name, start, due, completed, description FROM milestone
+            WHERE name='Test'
+            """))
+
+        # Use the same model object to update the milestone
+        milestone.description = 'Some text'
+        milestone.update()
+        self.assertEqual([('Test', 0, 0, 0, 'Some text')], self.env.db_query("""
+            SELECT name, start, due, completed, description FROM milestone
             WHERE name='Test'
             """))
 
@@ -1291,15 +1310,17 @@ class MilestoneTestCase(unittest.TestCase):
         self.env.db_transaction("INSERT INTO milestone (name) VALUES ('Test')")
 
         milestone = Milestone(self.env, 'Test')
+        t0 = datetime(2000, 1, 1, tzinfo=utc)
         t1 = datetime(2001, 1, 1, tzinfo=utc)
         t2 = datetime(2002, 2, 2, tzinfo=utc)
+        milestone.start = t0
         milestone.due = t1
         milestone.completed = t2
         milestone.description = 'Foo bar'
         milestone.update()
 
         self.assertEqual(
-            [('Test', to_utimestamp(t1), to_utimestamp(t2), 'Foo bar')],
+            [('Test', to_utimestamp(t0), to_utimestamp(t1), to_utimestamp(t2), 'Foo bar')],
             self.env.db_query("SELECT * FROM milestone WHERE name='Test'"))
 
     def test_update_milestone_without_name(self):

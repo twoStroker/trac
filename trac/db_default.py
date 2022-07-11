@@ -152,6 +152,7 @@ schema = [
         Column('description')],
     Table('milestone', key='name')[
         Column('name'),
+        Column('start',type='int64'),
         Column('due', type='int64'),
         Column('completed', type='int64'),
         Column('description')],

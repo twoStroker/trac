@@ -675,9 +675,11 @@ class Query(object):
                 elif name == 'milestone' and name not in custom_fields:
                     sql.append("COALESCE(milestone.completed,0)=0%s,"
                                "milestone.completed%s,"
+                               "COALESCE(milestone.start,0)=0%s,"
+                               "milestone.start%s,"
                                "COALESCE(milestone.due,0)=0%s,"
                                "milestone.due%s,%s%s"
-                               % (desc, desc, desc, desc, col, desc))
+                               % (desc, desc, desc, desc, desc, desc, col, desc))
                 elif name == 'version' and name not in custom_fields:
                     sql.append("COALESCE(version.time,0)=0%s,"
                                "version.time%s,%s%s"

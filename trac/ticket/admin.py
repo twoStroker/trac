@@ -254,6 +254,7 @@ class MilestoneAdminPanel(TicketAdminPanel):
             data = {
                 'view': 'detail',
                 'milestone': milestone,
+                'default_start': milestone_module.get_default_start(req),
                 'default_due': milestone_module.get_default_due(req),
                 'retarget_to': milestone_module.default_retarget_to
             }
@@ -386,7 +387,7 @@ class MilestoneAdminPanel(TicketAdminPanel):
         yield ('milestone list', '',
                "Show milestones",
                None, self._do_list)
-        yield ('milestone add', '<name> [due]',
+        yield ('milestone add', '<name> [start] [due]',
                "Add milestone",
                None, self._do_add)
         yield ('milestone rename', '<name> <newname>',
@@ -402,6 +403,16 @@ class MilestoneAdminPanel(TicketAdminPanel):
                an empty string ("").
                """ % hints,
                self._complete_name, self._do_due)
+        yield ('milestone start', '<name> <start>',
+               """Set milestone start date
+
+               The <start> date must be specified in the "%(datetime)s"
+               or "%(iso8601)s" (ISO 8601) format.
+               Alternatively, "now" can be used to set the start date to the
+               current time. To remove the start date from a milestone, specify
+               an empty string ("").
+               """ % hints,
+               self._complete_name, self._do_start)
         yield ('milestone completed', '<name> <completed>',
                """Set milestone complete date
 
@@ -425,16 +436,21 @@ class MilestoneAdminPanel(TicketAdminPanel):
 
     def _do_list(self):
         print_table([(m.name,
+                      format_date(m.start, console_date_format)
+                      if m.start else None,
                       format_date(m.due, console_date_format)
                       if m.due else None,
                       format_datetime(m.completed, console_datetime_format)
                       if m.completed else None)
                      for m in model.Milestone.select(self.env)],
-                    [_("Name"), _("Due"), _("Completed")])
+                    [_("Name"), _("Start"), _("Due"), _("Completed")])
 
-    def _do_add(self, name, due=None):
+    def _do_add(self, name, start=None, due=None):
         milestone = model.Milestone(self.env)
         milestone.name = name
+        if start is not None:
+            milestone.start = parse_date(start, hint='datetime',
+                                       locale=get_console_locale(self.env))
         if due is not None:
             milestone.due = parse_date(due, hint='datetime',
                                        locale=get_console_locale(self.env))
@@ -450,6 +466,13 @@ class MilestoneAdminPanel(TicketAdminPanel):
         milestone.due = parse_date(due, hint='datetime',
                                    locale=get_console_locale(self.env)) \
                         if due else None
+        milestone.update()
+
+    def _do_start(self, name, start):
+        milestone = model.Milestone(self.env, name)
+        milestone.start = parse_date(start, hint='datetime',
+                                   locale=get_console_locale(self.env)) \
+                        if start else None
         milestone.update()
 
     def _do_completed(self, name, completed):
