@@ -1171,24 +1171,6 @@ class MilestoneTestCase(unittest.TestCase):
             WHERE name='Test'
             """))
 
-    def test_create_and_update_milestone_dates(self):
-        milestone = Milestone(self.env)
-        milestone.name = 'Test'
-        milestone.insert()
-
-        self.assertEqual([('Test', 0, 0, 0, '')], self.env.db_query("""
-            SELECT name, start, due, completed, description FROM milestone
-            WHERE name='Test'
-            """))
-
-        # Use the same model object to update the milestone
-        milestone.description = 'Some text'
-        milestone.update()
-        self.assertEqual([('Test', 0, 0, 0, 'Some text')], self.env.db_query("""
-            SELECT name, start, due, completed, description FROM milestone
-            WHERE name='Test'
-            """))
-
     def test_move_tickets(self):
         self.env.db_transaction.executemany(
             "INSERT INTO milestone (name) VALUES (%s)",
