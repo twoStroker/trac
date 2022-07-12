@@ -403,16 +403,16 @@ class MilestoneAdminPanel(TicketAdminPanel):
                an empty string ("").
                """ % hints,
                self._complete_name, self._do_due)
-        yield ('milestone start', '<name> <started>',
+        yield ('milestone started', '<name> <started>',
                """Set milestone start date
 
-               The <start> date must be specified in the "%(datetime)s"
+               The <started> date must be specified in the "%(datetime)s"
                or "%(iso8601)s" (ISO 8601) format.
                Alternatively, "now" can be used to set the start date to the
                current time. To remove the start date from a milestone, specify
                an empty string ("").
                """ % hints,
-               self._complete_name, self._do_start)
+               self._complete_name, self._do_started)
         yield ('milestone completed', '<name> <completed>',
                """Set milestone complete date
 
@@ -468,7 +468,7 @@ class MilestoneAdminPanel(TicketAdminPanel):
                         if due else None
         milestone.update()
 
-    def _do_start(self, name, started):
+    def _do_started(self, name, started):
         milestone = model.Milestone(self.env, name)
         milestone.started = parse_date(started, hint='datetime',
                                    locale=get_console_locale(self.env)) \

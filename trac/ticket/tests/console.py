@@ -902,6 +902,45 @@ class TracAdminTestCase(TracAdminTestCaseBase):
             'isohint': get_datetime_format_hint('iso8601')
         })
 
+    def test_milestone_started_ok(self):
+        """
+        Tests the 'milestone started' command in trac-admin.  This particular
+        test passes valid arguments and checks for success.
+        """
+        self.execute('milestone started milestone2 "%s"' % self._test_date)
+        rv, output = self.execute('milestone list')
+        self.assertEqual(0, rv, output)
+        self.assertExpectedResult(output)
+
+    def test_milestone_started_unset_ok(self):
+        """
+        Tests the 'milestone started' command in trac-admin.  This particular
+        test passes valid arguments for unsetting the start date.
+        """
+        self.execute('milestone started milestone2 "%s"' % self._test_date)
+        self.execute('milestone started milestone2 ""')
+        rv, output = self.execute('milestone list')
+        self.assertEqual(0, rv, output)
+        self.assertExpectedResult(output)
+
+    def test_milestone_started_error_bad_milestone(self):
+        """
+        Tests the 'milestone started' command in trac-admin.  This particular
+        test tries to change the start date on a milestone that does not exist.
+        """
+        rv, output = self.execute('milestone started bad_milestone "%s"'
+                                  % self._test_date)
+        self.assertEqual(2, rv, output)
+        self.assertExpectedResult(output)
+
+    def test_milestone_started_invalid_date(self):
+        rv, output = self.execute('milestone started milestone1 <started>')
+        self.assertEqual(2, rv, output)
+        self.assertExpectedResult(output, {
+            'hint': self.datetime_format_hint,
+            'isohint': get_datetime_format_hint('iso8601')
+        })
+
     def test_milestone_completed_ok(self):
         """
         Tests the 'milestone completed' command in trac-admin.  This particular

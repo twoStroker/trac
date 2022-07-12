@@ -468,7 +468,7 @@ milestone rename <name> <newname>
 
     Rename milestone
 
-milestone start <name> <started>
+milestone started <name> <started>
 
     Set milestone start date
 
@@ -483,9 +483,9 @@ milestone4
 
 ===== test_milestone_add_ok =====
 
-Name           Due  Started     Completed
------------------------------------------
-new_milestone       2004-01-11
+Name           Due         Started  Completed
+---------------------------------------------
+new_milestone  2004-01-11
 milestone1
 milestone2
 milestone3
@@ -493,9 +493,9 @@ milestone4
 
 ===== test_milestone_add_utf8_ok =====
 
-Name        Due  Started     Completed
---------------------------------------
-©tat_final       2004-01-11
+Name        Due         Started  Completed
+------------------------------------------
+©tat_final  2004-01-11
 milestone1
 milestone2
 milestone3
@@ -518,9 +518,9 @@ milestone4
 ResourceNotFound: Milestone bad_milestone does not exist.
 ===== test_milestone_due_ok =====
 
-Name        Due  Started     Completed
---------------------------------------
-milestone2       2004-01-11
+Name        Due         Started  Completed
+------------------------------------------
+milestone2  2004-01-11
 milestone1
 milestone3
 milestone4
@@ -538,6 +538,28 @@ milestone4
 ResourceNotFound: Milestone bad_milestone does not exist.
 ===== test_milestone_due_invalid_date =====
 TracError: "<due>" is an invalid date, or the date format is not known. Try "%(hint)s" or "%(isohint)s" instead.
+===== test_milestone_started_ok =====
+
+Name        Due  Started     Completed
+--------------------------------------
+milestone1
+milestone2       2004-01-11
+milestone3
+milestone4
+
+===== test_milestone_started_unset_ok =====
+
+Name        Due  Started  Completed
+-----------------------------------
+milestone1
+milestone2
+milestone3
+milestone4
+
+===== test_milestone_started_error_bad_milestone =====
+ResourceNotFound: Milestone bad_milestone does not exist.
+===== test_milestone_started_invalid_date =====
+TracError: "<started>" is an invalid date, or the date format is not known. Try "%(hint)s" or "%(isohint)s" instead.
 ===== test_milestone_completed_ok =====
 
 Name        Due  Started  Completed
