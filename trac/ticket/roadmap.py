@@ -812,11 +812,11 @@ class MilestoneModule(Component):
 
         if 'start' in req.args:
             startdate = req.args.get('startdate')
-            milestone.start = user_time(req, parse_date, startdate,
+            milestone.started = user_time(req, parse_date, startdate,
                                       hint='datetime') \
                             if startdate else None
         else:
-            milestone.start = None
+            milestone.started = None
 
         if 'due' in req.args:
             duedate = req.args.get('duedate')
@@ -1184,7 +1184,7 @@ class MilestoneModule(Component):
             return
         term_regexps = search_to_regexps(terms)
         milestone_realm = Resource(self.realm)
-        for name, start, due, completed, description \
+        for name, due, started, completed, description \
                 in MilestoneCache(self.env).milestones.values():
             if all(r.search(description) or r.search(name)
                    for r in term_regexps):

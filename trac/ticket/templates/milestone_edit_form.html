@@ -72,27 +72,6 @@
       </div>
       <div class="field">
         <label>
-          <input type="checkbox" id="start" name="start"${
-               {'checked': milestone.start,
-                'disabled': disabled
-               }|htmlattr}/>
-          ${_("Start:")}<br/>
-        </label>
-        ## same for this one
-        <label${{'class': {'readonly': readonly}}|htmlattr}>
-          <input type="text" id="startdate" name="startdate"
-                 class="trac-datetimepicker"${
-               {'size': len(datetime_hint) + 1,
-                'value': format_datetime(milestone.start or default_due),
-                'readonly': readonly,
-                'title': _('Format: %(datehint)s', datehint=datetime_hint)
-               }|htmlattr}/>
-          <span class="trac-datetimehint">${
-            _("Format: %(datehint)s", datehint=datetime_hint)}</span>
-        </label>
-      </div>
-      <div class="field">
-        <label>
           <input type="checkbox" id="due" name="due"${
                {'checked': milestone.due,
                 'disabled': disabled
@@ -104,6 +83,27 @@
                  class="trac-datetimepicker"${
                {'size': len(datetime_hint) + 1,
                 'value': format_datetime(milestone.due or default_due),
+                'readonly': readonly,
+                'title': _('Format: %(datehint)s', datehint=datetime_hint)
+               }|htmlattr}/>
+          <span class="trac-datetimehint">${
+            _("Format: %(datehint)s", datehint=datetime_hint)}</span>
+        </label>
+      </div>
+      <div class="field">
+        <label>
+          <input type="checkbox" id="start" name="start"${
+               {'checked': milestone.started,
+                'disabled': disabled
+               }|htmlattr}/>
+          ${_("Started:")}<br/>
+        </label>
+        ## same for this one
+        <label${{'class': {'readonly': readonly}}|htmlattr}>
+          <input type="text" id="startdate" name="startdate"
+                 class="trac-datetimepicker"${
+               {'size': len(datetime_hint) + 1,
+                'value': format_datetime(milestone.started or default_start),
                 'readonly': readonly,
                 'title': _('Format: %(datehint)s', datehint=datetime_hint)
                }|htmlattr}/>

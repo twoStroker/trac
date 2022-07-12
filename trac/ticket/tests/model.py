@@ -1123,8 +1123,8 @@ class MilestoneTestCase(unittest.TestCase):
         milestone = Milestone(self.env)
         self.assertFalse(milestone.exists)
         self.assertIsNone(milestone.name)
-        self.assertIsNone(milestone.start)
         self.assertIsNone(milestone.due)
+        self.assertIsNone(milestone.started)
         self.assertIsNone(milestone.completed)
         self.assertEqual('', milestone.description)
         self.assertEqual("<Milestone None>", repr(milestone))
@@ -1159,7 +1159,7 @@ class MilestoneTestCase(unittest.TestCase):
         milestone.insert()
 
         self.assertEqual([('Test', 0, 0, 0, '')], self.env.db_query("""
-            SELECT name, start, due, completed, description FROM milestone
+            SELECT name, due, started, completed, description FROM milestone
             WHERE name='Test'
             """))
 
@@ -1167,7 +1167,7 @@ class MilestoneTestCase(unittest.TestCase):
         milestone.description = 'Some text'
         milestone.update()
         self.assertEqual([('Test', 0, 0, 0, 'Some text')], self.env.db_query("""
-            SELECT name, start, due, completed, description FROM milestone
+            SELECT name, due, started, completed, description FROM milestone
             WHERE name='Test'
             """))
 
@@ -1295,8 +1295,8 @@ class MilestoneTestCase(unittest.TestCase):
         t0 = datetime(2000, 1, 1, tzinfo=utc)
         t1 = datetime(2001, 1, 1, tzinfo=utc)
         t2 = datetime(2002, 2, 2, tzinfo=utc)
-        milestone.start = t0
-        milestone.due = t1
+        milestone.due = t0
+        milestone.started = t1
         milestone.completed = t2
         milestone.description = 'Foo bar'
         milestone.update()

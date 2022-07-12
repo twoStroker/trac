@@ -387,7 +387,7 @@ class MilestoneAdminPanel(TicketAdminPanel):
         yield ('milestone list', '',
                "Show milestones",
                None, self._do_list)
-        yield ('milestone add', '<name> [start] [due]',
+        yield ('milestone add', '<name> [due] [started]',
                "Add milestone",
                None, self._do_add)
         yield ('milestone rename', '<name> <newname>',
@@ -403,7 +403,7 @@ class MilestoneAdminPanel(TicketAdminPanel):
                an empty string ("").
                """ % hints,
                self._complete_name, self._do_due)
-        yield ('milestone start', '<name> <start>',
+        yield ('milestone start', '<name> <started>',
                """Set milestone start date
 
                The <start> date must be specified in the "%(datetime)s"
@@ -436,20 +436,20 @@ class MilestoneAdminPanel(TicketAdminPanel):
 
     def _do_list(self):
         print_table([(m.name,
-                      format_date(m.start, console_date_format)
-                      if m.start else None,
                       format_date(m.due, console_date_format)
                       if m.due else None,
+                      format_date(m.started, console_date_format)
+                      if m.started else None,
                       format_datetime(m.completed, console_datetime_format)
                       if m.completed else None)
                      for m in model.Milestone.select(self.env)],
-                    [_("Name"), _("Start"), _("Due"), _("Completed")])
+                    [_("Name"), _("Due"), _("Started"), _("Completed")])
 
-    def _do_add(self, name, start=None, due=None):
+    def _do_add(self, name, due=None, started=None):
         milestone = model.Milestone(self.env)
         milestone.name = name
-        if start is not None:
-            milestone.start = parse_date(start, hint='datetime',
+        if started is not None:
+            milestone.started = parse_date(started, hint='datetime',
                                        locale=get_console_locale(self.env))
         if due is not None:
             milestone.due = parse_date(due, hint='datetime',
@@ -468,11 +468,11 @@ class MilestoneAdminPanel(TicketAdminPanel):
                         if due else None
         milestone.update()
 
-    def _do_start(self, name, start):
+    def _do_start(self, name, started):
         milestone = model.Milestone(self.env, name)
-        milestone.start = parse_date(start, hint='datetime',
+        milestone.started = parse_date(started, hint='datetime',
                                    locale=get_console_locale(self.env)) \
-                        if start else None
+                        if started else None
         milestone.update()
 
     def _do_completed(self, name, completed):

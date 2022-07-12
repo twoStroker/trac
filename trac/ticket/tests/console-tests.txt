@@ -444,7 +444,7 @@ Name  Time
 1.0
 
 ===== test_milestone_help =====
-milestone add <name> [due]
+milestone add <name> [due] [started]
 
     Add milestone
 
@@ -468,10 +468,14 @@ milestone rename <name> <newname>
 
     Rename milestone
 
+milestone start <name> <started>
+
+    Set milestone start date
+
 ===== test_milestone_list_ok =====
 
-Name        Due  Completed
---------------------------
+Name        Due  Started  Completed
+-----------------------------------
 milestone1
 milestone2
 milestone3
@@ -479,9 +483,9 @@ milestone4
 
 ===== test_milestone_add_ok =====
 
-Name           Due         Completed
-------------------------------------
-new_milestone  2004-01-11
+Name           Due  Started     Completed
+-----------------------------------------
+new_milestone       2004-01-11
 milestone1
 milestone2
 milestone3
@@ -489,9 +493,9 @@ milestone4
 
 ===== test_milestone_add_utf8_ok =====
 
-Name        Due         Completed
----------------------------------
-©tat_final  2004-01-11
+Name        Due  Started     Completed
+--------------------------------------
+©tat_final       2004-01-11
 milestone1
 milestone2
 milestone3
@@ -503,8 +507,8 @@ ResourceExistsError: Milestone "milestone1" already exists.
 TracError: "<add>" is an invalid date, or the date format is not known. Try "%(hint)s" or "%(isohint)s" instead.
 ===== test_milestone_rename_ok =====
 
-Name               Due  Completed
----------------------------------
+Name               Due  Started  Completed
+------------------------------------------
 changed_milestone
 milestone2
 milestone3
@@ -514,17 +518,17 @@ milestone4
 ResourceNotFound: Milestone bad_milestone does not exist.
 ===== test_milestone_due_ok =====
 
-Name        Due         Completed
----------------------------------
-milestone2  2004-01-11
+Name        Due  Started     Completed
+--------------------------------------
+milestone2       2004-01-11
 milestone1
 milestone3
 milestone4
 
 ===== test_milestone_due_unset_ok =====
 
-Name        Due  Completed
---------------------------
+Name        Due  Started  Completed
+-----------------------------------
 milestone1
 milestone2
 milestone3
@@ -536,9 +540,9 @@ ResourceNotFound: Milestone bad_milestone does not exist.
 TracError: "<due>" is an invalid date, or the date format is not known. Try "%(hint)s" or "%(isohint)s" instead.
 ===== test_milestone_completed_ok =====
 
-Name        Due  Completed
-------------------------------------
-milestone2       2004-01-11 00:00:00
+Name        Due  Started  Completed
+---------------------------------------------
+milestone2                2004-01-11 00:00:00
 milestone1
 milestone3
 milestone4
@@ -549,8 +553,8 @@ ResourceNotFound: Milestone bad_milestone does not exist.
 TracError: "<com>" is an invalid date, or the date format is not known. Try "%(hint)s" or "%(isohint)s" instead.
 ===== test_milestone_remove_ok =====
 
-Name        Due  Completed
---------------------------
+Name        Due  Started  Completed
+-----------------------------------
 milestone1
 milestone2
 milestone4

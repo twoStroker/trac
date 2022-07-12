@@ -1057,13 +1057,13 @@ class MilestoneCache(core.Component):
         description.
         """
         milestones = {}
-        for name, start, due, completed, description in self.env.db_query("""
-                SELECT name, start, due, completed, description FROM milestone
+        for name, due, started, completed, description in self.env.db_query("""
+                SELECT name, due, started, completed, description FROM milestone
                 """):
             milestones[name] = (
                 name,
-                _from_timestamp(start),
                 _from_timestamp(due),
+                _from_timestamp(started),
                 _from_timestamp(completed),
                 description or '')
         return milestones
@@ -1093,11 +1093,11 @@ class MilestoneCache(core.Component):
         process, until its `~Milestone.insert` method gets called with
         success.
         """
-        name, start, due, completed, description = values
+        name, due, started, completed, description = values
         milestone = milestone or Milestone(self.env)
         milestone.name = name
-        milestone.start = start
         milestone.due = due
+        milestone.started = started
         milestone.completed = completed
         milestone.description = description
         milestone.checkin(invalidate=False)
@@ -1143,8 +1143,8 @@ class Milestone(object):
 
     def checkin(self, invalidate=True):
         self._old = {'name': self.name, 
-                     'start': self.start,
                      'due': self.due,
+                     'started': self.started,
                      'completed': self.completed,
                      'description': self.description}
         if invalidate:
@@ -1177,9 +1177,9 @@ class Milestone(object):
         with self.env.db_transaction as db:
             try:
                 db("""
-                    INSERT INTO milestone (name, start, due, completed, description)
+                    INSERT INTO milestone (name, due, started, completed, description)
                     VALUES (%s,%s,%s,%s,%s)
-                    """, (self.name, to_utimestamp(self.start), to_utimestamp(self.due),
+                    """, (self.name, to_utimestamp(self.due), to_utimestamp(self.started),
                           to_utimestamp(self.completed), self.description))
             except self.env.db_exc.IntegrityError:
                 raise ResourceExistsError(
@@ -1213,9 +1213,9 @@ class Milestone(object):
             self.env.log.info("Updating milestone '%s'", old['name'])
             try:
                 db("""UPDATE milestone
-                      SET name=%s, start=%s, due=%s, completed=%s, description=%s
+                      SET name=%s, due=%s, started=%s, completed=%s, description=%s
                       WHERE name=%s
-                      """, (self.name, to_utimestamp(self.start), to_utimestamp(self.due),
+                      """, (self.name, to_utimestamp(self.due), to_utimestamp(self.started),
                             to_utimestamp(self.completed),
                             self.description, old['name']))
             except self.env.db_exc.IntegrityError:
@@ -1274,9 +1274,9 @@ class Milestone(object):
             milestones = [m for m in milestones if m.completed is None]
         def milestone_order(m):
             return (m.completed or utcmax,
-                    m.due or utcmin,
+                    m.due or utcmax,
                     embedded_numbers(m.name))
-        return sorted(milestones, key=milestone_order,reverse=True)
+        return sorted(milestones, key=milestone_order)
 
 
 class Report(object):

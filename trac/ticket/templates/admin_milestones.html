@@ -85,10 +85,10 @@
             <label>${_("Name:")} <input type="text" name="name" id="name" size="22"/></label>
           </div>
           <div class="field">
-            <input type="hidden" name="start" value="1" />
-            <label>${_("Start:")}
-              <input type="text" id="startdate" class="trac-datetimepicker"
-                     name="startdate" size="${len(datetime_hint) + 1}"
+            <input type="hidden" name="due" value="1" />
+            <label>${_("Due:")}
+              <input type="text" id="duedate" class="trac-datetimepicker"
+                     name="duedate" size="${len(datetime_hint) + 1}"
                      title="${_('Format: %(datehint)s', datehint=datetime_hint)}"/>
               <span class="trac-datetimehint">
                 ${_("Format %(datehint)s", datehint=datetime_hint)}
@@ -96,10 +96,10 @@
             </label>
           </div>
           <div class="field">
-            <input type="hidden" name="due" value="1" />
-            <label>${_("Due:")}
-              <input type="text" id="duedate" class="trac-datetimepicker"
-                     name="duedate" size="${len(datetime_hint) + 1}"
+            <input type="hidden" name="start" value="1" />
+            <label>${_("Started:")}
+              <input type="text" id="startdate" class="trac-datetimepicker"
+                     name="startdate" size="${len(datetime_hint) + 1}"
                      title="${_('Format: %(datehint)s', datehint=datetime_hint)}"/>
               <span class="trac-datetimehint">
                 ${_("Format %(datehint)s", datehint=datetime_hint)}
@@ -124,7 +124,7 @@
               # if can_remove:
               <th class="sel"></th>
               # endif
-              <th>${_("Name")}</th><th>${_("Start")}</th><th>${_("Due")}</th><th>${_("Completed")}</th>
+              <th>${_("Name")}</th><th>${_("Due")}</th><th>${_("Started")}</th><th>${_("Completed")}</th>
               <th title="${_('Default milestone for new tickets')}">${_("Default")}</th>
               <th title="${_('Default milestone for retargeting tickets')}">${_("Retarget")}</th>
               <th title="${_('Number of tickets associated with milestone')}">${_("Tickets")}</th>
@@ -142,8 +142,8 @@
               <td>
                 <a href="${panel_href(milestone.name)}">${milestone.name}</a>
               </td>
-              <td>${format_datetime(milestone.start) if milestone.start}</td>
               <td>${format_datetime(milestone.due) if milestone.due}</td>
+              <td>${format_datetime(milestone.started) if milestone.started}</td>
               <td>${format_datetime(milestone.completed) if milestone.completed}</td>
               <td class="default">
                 <input type="radio" name="ticket_default"${
@@ -180,8 +180,8 @@
               <td>
                 <a href="${panel_href(milestone.name)}">${milestone.name}</a>
               </td>
-              <td>${format_datetime(milestone.start) if milestone.start}</td>
               <td>${format_datetime(milestone.due) if milestone.due}</td>
+              <td>${format_datetime(milestone.started) if milestone.started}</td>
               <td>${format_datetime(milestone.completed) if milestone.completed}</td>
               <td class="default">
                 <input type="radio" name="ticket_default"${
@@ -218,8 +218,8 @@
               <td>
                 <a href="${panel_href(milestone.name)}">${milestone.name}</a>
               </td>
-              <td>${format_datetime(milestone.start) if milestone.start}</td>
               <td>${format_datetime(milestone.due) if milestone.due}</td>
+              <td>${format_datetime(milestone.started) if milestone.started}</td>
               <td>${format_datetime(milestone.completed) if milestone.completed}</td>
               <td class="default">
                 <input type="radio" name="ticket_default"${
