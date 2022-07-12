@@ -27,4 +27,5 @@ sql = [
 ]
 
 def do_upgrade(env, ver, cursor):
-    cursor.execute(sql)
+    for s in sql:
+        cursor.execute(s)
